@@ -1,0 +1,107 @@
+---
+title: "AmericanCommunitySurvey_TatreauGillian"
+author: "Gillian Tatreau"
+date: "2022-09-15"
+output: pdf_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# import packages
+library(ggplot2)
+library(pastecs)
+
+# save file directory and read file
+file_source <- "/Users/gillian/Documents/Bellevue Grad Program/Fall 2022/DSC520/DSC520 Repo/Week3_American_community_survey.csv"
+survey <- read.table(file = file_source, header = TRUE, sep = ",")
+head(survey)
+
+```
+
+## i.
+
+Id - Data Type: varchar; Intent: unique identifier for each data entry
+
+Id2 - Data Type: int; Intent: shortened version of ID
+
+Geography - Data Type: char; Intent: location where each data entry
+comes from
+
+PopGroupID - Data Type: int; Intent: shows code for type of population
+group (assuming code 1 refers to total population)
+
+POPGROUP.display.label - Data Type: char; Intent: labels what group of
+the population the data entry comes from
+
+RacesReported - Data Type: int; Intent: number of people that reported their race on the survey
+
+HSDegree - Data Type: num; Intent: percentage of population with High
+School Diploma
+
+BachDegree - Data Type: num; Intent: percentage of population with
+Bachelor's Degree
+
+```{r}
+# list of column names
+colnames(survey)
+
+```
+## ii. 
+```{r}
+# structure of data
+str(survey)
+nrow(survey)
+ncol(survey)
+```
+
+## iii. 
+```{r}
+# histogram of HSDegree variable
+# use 12 bins (Sturges' law: 136 observations so sq. rt. of 136 is 11.66 so round to 12)
+ggplot(data = survey) + geom_histogram(aes(x = HSDegree), bins = 12) + ggtitle("Percentage of Population with High School Degree per County") + xlab("Percent of Population with High School Degree") + ylab("Frequency")
+
+```
+
+## iv. 
+1. The data distribution appears to be unimodal.
+2. The distribution is not quite symmetrical, with the left side appearing slightly wider. 
+3. It is approximately bell-shaped, ignoring the tail on the left-hand side of the distribution
+4. It is not normally distributed because it has a large leading tail on the left side of the plot.
+5. The distribution has a left skew.
+6. 
+```{r}
+# add normal curve to histogram
+ggplot(data = survey, aes(x = HSDegree)) + geom_histogram(aes(y = ..density..), bins = 12) + ggtitle("Percentage of Population with High School Degree per County") + xlab("Percent of Population with High School Degree") + ylab("Density") + geom_density()
+
+```
+7. A normal distribution cannot accurately represent this data as it is in its entirety; however, if a researcher were to decide the counties with the lower percent of high school graduates are outliers and dismisses them entirely, a normal distribution could possibly model the rest of the data. 
+
+## v. 
+```{r}
+# probability plot of HSDegree variable
+ggplot(data = survey, mapping = aes(sample = HSDegree)) + stat_qq(geom = "point", color = "grey50") + stat_qq_line(color = "red") + ggtitle("Normal Probability Plot of Percent of Population with High School Degrees") + xlab("Theoretical Quantiles") + ylab("High School Degree Quantiles")
+# test for log-normal distribution
+ggplot(data = survey, mapping = aes(sample = log(HSDegree))) + stat_qq(geom = "point", color = "grey50") + stat_qq_line(color = "red") + ggtitle("Normal Probability Plot of Percent of Population with High School Degrees") + xlab("Theoretical Quantiles") + ylab("High School Degree Quantiles")
+
+```
+
+## vi. 
+1. Based on the normal probability plot, the data is not normally distributed because it does not follow a straight line. Even when the log function is applied to the data, it still is not enough to straighten into a linear plot.
+2. The distribution is skewed to the left because the plotted points bend down and to the right of the normal line.
+
+## vii. 
+```{r}
+# quantify normality
+stat.desc(survey, options(digits = 2))
+stat.desc(survey["HSDegree"], norm = TRUE, options(digits = 2))
+
+```
+
+## viii. 
+The skewness value for the distribution is -1.67, which mean the distribution is negatively skewed. This supports what was seen in the plots- the majority of the scores are at the higher end with the tail pointing to the lower end of the percent fo the population with a high school diploma. The 4.35 value for kurtosis describes the leptokurtically distributed data, which means that there are a lot of values in the tail of the distribution. At present, calculating the z-score for a value in this sample would not necessarily provide very much meaningful information (since the data is not normally distributed knowing how many standard deviations from the mean a value lies will not necessarily bring very much insight); however, if the sample size were to be larger, eventually the data should become approximately normally distributed due to the central limit theorem so the z-score in that instance would be much more useful for determining how many standard deviations the value lies from the mean (which would be useful in determining the probability of obtaining that value). 
