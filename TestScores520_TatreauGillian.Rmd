@@ -1,0 +1,60 @@
+---
+title: "TestScores_Week4_TatreauGillian"
+author: "Gillian Tatreau"
+date: "2022-09-22"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Set up for R script
+
+```{r}
+# import packages
+library(ggplot2)
+library(pastecs)
+
+# file source and read file to variable
+file_source <- "/Users/gillian/Documents/Bellevue Grad Program/Fall 2022/DSC520/DSC520 Repo/scores.csv"
+scores <- read.table(file = file_source, header = TRUE, sep = ",")
+head(scores)
+
+```
+
+## 1. The observational units in this study are the number of students with each score (student performance). Because the data includes counts (the number of students scoring each score listed), the score, and section, the observational units are not necessarily the students themselves because it is impossible from this data set to pick out which student scored which grade.
+
+## 2. The variables mentioned in the narrative paragraph are course grades (which is not included in the data file, but could be either categorical by letter grade or quantitative- by percentage points), total points earned in the course (quantitative), and Section (categorical).
+
+## 3.
+
+```{r}
+# create variables to hold just regular or just sports section
+regular <- scores[ scores$Section == "Regular", ]
+head(regular)
+sports <- scores[ scores$Section == "Sports", ]
+head(sports)
+```
+
+## 4.
+
+```{r}
+# plot scores to number of students with that score
+ggplot(data = scores) + geom_point(aes(x = Score, y = Count, color = Section)) + ggtitle("Scores for Both Sections") + xlab("Scores") + ylab("Number of students with score")
+ggplot(data = regular) + geom_point(aes(x = Score, y = Count)) + ggtitle("Scores for Regular Section") + xlab("Scores") + ylab("Number of students with score")
+ggplot(data = sports) + geom_point(aes(x = Score, y = Count)) + ggtitle("Scores for Sports Section") + xlab("Scores") + ylab("Number of students with score")
+
+```
+
+### a. The regular section tended to score more points than the sports section. The regular section had a mean of 327.6 while the sports section had a mean of 307.37 points. The median of the regular section was 325 and the median of the sports section was 315 points. The regular section was also more consistent, with more scores closer to the section average and median, which is quantified with a smaller range of 115. The sports section was much less consistent with a much higher degree of variability in the scores, which is seen both in the larger range (195) and the higher standard deviation (58.03) which shows that there is more spread in the sports scores.
+
+```{r}
+# central tendency calculations
+stat.desc(regular, options(digits = 2))
+stat.desc(sports, options(digits = 2))
+```
+
+### b. Not every student in the regular section scored higher than the sports section- the highest score actually appears in the sports section (as well as the lowest score). The statistical tendency means that if you are comparing the two sections, an average student from the regular section scored better than an average student from the sports section. The regular section as a whole performed better than the sports section, but these tendencies are more complex on an individual level.
+
+### c. An additional variable that could be influencing the point distributions might be class level of the students enrolled- since the students knew ahead of time there would be a sports and regular section, the inclusion of a new "fun" section might push younger students to push themselves to take a harder course than they are prepared for. Another might be major of the students enrolled- students who are minoring or need to fill an elective might be more willing to take a sports themed course and the regular section could be filled with more students who are required to take it for their major.
