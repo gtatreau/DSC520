@@ -1,0 +1,143 @@
+---
+title: "Clustering Week 11"
+author: "Gillian Tatreau"
+date: "2022-11-11"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r set up, include=FALSE}
+library(ggplot2)
+library(factoextra)
+library(purrr)
+
+setwd("/Users/gillian/Documents/Bellevue Grad Program/Fall 2022/DSC520/DSC520 Repo")
+
+file_name <- "clustering-data.csv"
+cluster1 <- read.csv(file_name)
+head(cluster1)
+```
+
+## d-i. Scatterplot
+```{r scatterplot, echo=FALSE}
+ggplot(cluster1, aes(x=x, y=y)) + 
+  geom_point()
+```
+
+## d-ii. K-Means algorithm
+```{r clustering, echo=FALSE}
+set.seed(42)
+
+cluster2 <- kmeans(cluster1, 2)
+str(cluster2)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster2$cluster))) + 
+         geom_point()
+
+cluster3 <- kmeans(cluster1, 3)
+str(cluster3)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster3$cluster))) + 
+  geom_point()
+
+cluster4 <- kmeans(cluster1, 4)
+str(cluster4)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster4$cluster))) + 
+  geom_point()
+
+cluster5 <- kmeans(cluster1, 5)
+str(cluster5)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster5$cluster))) + 
+  geom_point()
+
+cluster6 <- kmeans(cluster1, 6)
+str(cluster6)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster6$cluster))) + 
+  geom_point()
+
+cluster7 <- kmeans(cluster1, 7)
+str(cluster7)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster7$cluster))) + 
+  geom_point()
+
+cluster8 <- kmeans(cluster1, 8)
+str(cluster8)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster8$cluster))) + 
+  geom_point()
+
+cluster9 <- kmeans(cluster1, 9)
+str(cluster9)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster9$cluster))) + 
+  geom_point()
+
+cluster10 <- kmeans(cluster1, 10)
+str(cluster10)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster10$cluster))) + 
+  geom_point()
+
+cluster11 <- kmeans(cluster1, 11)
+str(cluster11)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster11$cluster))) + 
+  geom_point()
+
+cluster12 <- kmeans(cluster1, 12)
+str(cluster12)
+ggplot(cluster1, aes(x=x, y=y, colour = as.factor(cluster12$cluster))) + 
+  geom_point()
+
+
+```
+
+## d-iii. Average distance
+This one was very difficult for me. I could not manage to find a way to calculate the Euclidean distances for every data point in each cluster to its respective centroid. I am instead reporting the within cluster sum of squares for each k-value.
+```{r average distance to center, echo=FALSE}
+print("for k = 2")
+print(cluster2$withinss)
+print("for k = 3")
+print(cluster3$withinss)
+print("for k = 4")
+print(cluster4$withinss)
+print("for k = 5")
+print(cluster5$withinss)
+print("for k = 6")
+print(cluster6$withinss)
+print("for k = 7")
+print(cluster7$withinss)
+print("for k = 8")
+print(cluster8$withinss)
+print("for k = 9")
+print(cluster9$withinss)
+print("for k = 10")
+print(cluster10$withinss)
+print("for k = 11")
+print(cluster11$withinss)
+print("for k = 12")
+print(cluster12$withinss)
+
+```
+
+## e. 
+```{r elbow plot, echo=FALSE}
+tot_withinss <- map_dbl(2:12,  function(k){
+  model <- kmeans(x = cluster1, centers = k)
+  model$tot.withinss
+})
+
+elbow_df <- data.frame(
+  k = 2:12,
+  tot_withinss = tot_withinss
+)
+
+ggplot(elbow_df, aes(x = k, y = tot_withinss)) +
+  geom_line() +
+  scale_x_continuous(breaks = 2:12)
+
+```
+
+
+## f. The elbow point for this dataset occurs at k = 7. 
+
+### Code Appendix
+```{r ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
+```

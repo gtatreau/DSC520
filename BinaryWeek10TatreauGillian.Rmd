@@ -1,0 +1,85 @@
+---
+title: "Binary Classifier Data Week 10"
+author: "Gillian Tatreau"
+date: "2022-11-05"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r set up, include=FALSE}
+library(caTools)
+
+setwd("/Users/gillian/Documents/Bellevue Grad Program/Fall 2022/DSC520/DSC520 Repo")
+
+file_name <- "/Users/gillian/Documents/Bellevue Grad Program/Fall 2022/DSC520/DSC520 Repo/binary-classifier-data.csv"
+binary <- read.csv(file_name) 
+head(binary)
+
+split <- sample.split(binary, SplitRatio = 0.8)
+split
+train <- subset(binary, split == "TRUE")
+test <- subset(binary, split == "FALSE")
+
+colSums(is.na(binary))
+
+model1 <- glm(label ~ x + y, data = train, family = binomial())
+summary(model1)
+
+model2 <- glm(label ~ x * y, data = train, family = binomial())
+summary(model2)
+
+```
+
+## a. model2 (which includes the interaction term of x and y) represents the data better. 
+```{r}
+model1 <- glm(label ~ x + y, data = train, family = binomial())
+summary(model1)
+
+model2 <- glm(label ~ x * y, data = train, family = binomial())
+summary(model2)
+```
+
+
+## b.
+### i. Overall, model2 has greater accuracy in predicting the outcome of the label variable by about 10%. 
+```{r echo=FALSE}
+# accuracy of model 1 on train
+res <- predict(model1, train, type = "response")
+res
+confmatrix <- table(Actual_Value = train$label, Predicted_Value = res > 0.5)
+confmatrix
+
+(confmatrix[[1,1]] + confmatrix[[2,2]]) / sum(confmatrix)
+
+# accuracy of model 1 on test
+res <- predict(model1, test, type = "response")
+res
+confmatrix <- table(Actual_Value = test$label, Predicted_Value = res > 0.5)
+confmatrix
+
+(confmatrix[[1,1]] + confmatrix[[2,2]]) / sum(confmatrix)
+
+# accuracy of model 2 on train
+res <- predict(model2, train, type = "response")
+res
+confmatrix <- table(Actual_Value = train$label, Predicted_Value = res > 0.5)
+confmatrix
+
+(confmatrix[[1,1]] + confmatrix[[2,2]]) / sum(confmatrix)
+
+# accurary of model 2 on test
+res <- predict(model2, test, type = "response")
+res
+confmatrix <- table(Actual_Value = test$label, Predicted_Value = res > 0.5)
+confmatrix
+
+(confmatrix[[1,1]] + confmatrix[[2,2]]) / sum(confmatrix)
+
+```
+
+## Code Appendix
+```{r ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
+```

@@ -1,0 +1,93 @@
+---
+title: "StudentSurvey_Week7_TatreauGillian"
+author: "Gillian Tatreau"
+date: "2022-10-13"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r include=FALSE}
+# import packages
+library(ggplot2)
+library(pastecs)
+library(ppcor)
+
+# save file directory and read file
+file_source <- "/Users/gillian/Documents/Bellevue Grad Program/Fall 2022/DSC520/DSC520 Repo/student-survey.csv"
+survey <- read.table(file = file_source, header = TRUE, sep = ",")
+head(survey)
+
+```
+
+
+# i. 
+```{r echo=TRUE}
+# covariance of time spent reading and time spent watching TV
+cov(x = survey$TimeReading, y = survey$TimeTV)
+
+```
+You would use this calculation to determine the direction of the relationship between the two variables- this value of -20.4 indicates that there is an inverse relationship between time spent reading and time spent watching TV. This means that, on average, when time spent reading is low, time spent watching TV is high and vice versa. 
+
+# ii. 
+It appears that the measurement for time spent reading is hours and for time spent watching TV it is minutes. This could affect the covariance because the measurement for time spent watching TV is multitudes higher than that for time spent reading, exaggerating the result seen. This is not necessarily an issue if we are looking at only these two variables, but if we want to compare covariances between different pairings of variables within the dataset, there is no way to compare them unless the units of measurement are standardized. 
+For example, if we were to change the measurement for time spent watching TV to be in hours, we get a value for the covariance that, while still negative, is much closer to zero at -0.34. 
+```{r echo=FALSE}
+# example for changing measurement of time watching TV
+survey$TimeTV_min <- survey$TimeTV/60
+cov(x = survey$TimeReading, y = survey$TimeTV_min)
+
+```
+
+# iii. 
+The correlation test to be performed will be the the Pearson's correlation coefficient test. This is an appropriate test to use because Pearson's coefficient (as a significant value) assumes the sampling distributions of both variables are normal, which both variables (time spent watching TV and time spent reading) are. I predict the test will reveal a negative correlation between time spent reading and time spent watching TV, based on the negative value for the covariance. 
+```{r echo=FALSE}
+# test for normality
+stat.desc(survey["TimeReading"], norm = TRUE, options(digits = 2))
+stat.desc(survey["TimeTV_min"], norm = TRUE, options(digits = 2))
+```
+
+
+# iv. 
+## 1. 
+```{r echo=TRUE}
+round(cor(survey), digits = 2)
+```
+## 2. 
+```{r echo=TRUE}
+# correlation for two variables (time watching TV and happiness)
+cor(x = survey$TimeTV, y = survey$Happiness, method = "pearson")
+```
+
+## 3. 
+```{r echo=FALSE}
+# correlation for two variables, CI at 99%
+cor.test(x = survey$TimeTV, y = survey$Happiness, method = "pearson", conf.level = .95)
+cor.test(x = survey$TimeTV, y = survey$Happiness, method = "pearson", conf.level = .99)
+
+```
+At the 99% percentile, we cannot reject the null hypothesis and thus conclude that the true correlation between these two variables is 0. 
+
+## 4. 
+From the correlation matrix, we can infer that there is a strong negative relationship between time spent watching TV and time spent reading. It is likely that time spent reading and happiness have a negative relationship, and time spent watching TV and happiness have a positive relationship. There is nearly no relationship between time spent reading and gender, and time spent watching TV and gender. There may exist a very weak positive relationship between gender and happiness. 
+
+# v. 
+```{r echo=FALSE}
+# correlation coefficient and coefficient of determination
+cor.test(x = survey$TimeReading, y = survey$TimeTV, method = "pearson", conf.level = .95)
+cor(x = survey$TimeReading, y = survey$TimeTV, method = "pearson")^2
+```
+There is a strong negative relationship, as predicted above, between time spent reading and time spent watching TV. The coefficient of determination (0.78) means time spent reading accounts for 78% of the variability in time spent watching TV. 
+
+# vi. 
+From this data, we cannot conclude causality. We cannot conclude that watching TV caused students to read less. We can conclude the variables are related, and within the context of this data, we can infer that when students spend more time reading, they spend less time watching TV, and when they spend more time watching TV, they spend less time reading. 
+
+# vii. 
+```{r echo=FALSE}
+survey2 <- data.frame(survey$TimeReading, survey$TimeTV, survey$Happiness)
+pcor(survey2, method = "pearson")
+```
+If we control happiness, the partial correlation between time spent reading and time spent watching TV is -0.87, with a p-value of 0.00098. Compared to the result from earlier (-0.88) this is only a very small difference. The largest difference is when we control time spent watching TV, to have a partial correlation of 0.35 between time spent reading and happiness (compared to -0.43 from earlier), but due to the p-value of 0.32, this is not a significant value in actuality. 

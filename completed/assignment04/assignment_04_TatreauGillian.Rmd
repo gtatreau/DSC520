@@ -1,0 +1,121 @@
+---
+title: "ASSIGNMENT 4"
+author: "Gillian Tatreau"
+date: '2022-10-04'
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+bibliography: bibliography.bib
+---
+
+# Markdown Basics
+
+## Favorite Foods
+
+1.  milk tea with boba\
+2.  mac n cheese\
+3.  popcorn
+
+## Images
+
+![All Cases (Log Plot)](/Users/gillian/Documents/Bellevue%20Grad%20Program/Fall%202022/DSC520/DSC520%20Repo/completed/assignment04/plots/10-all-cases-log.png)
+
+## Add a Quote
+
+From Fyodor Dostoevsky's *Crime and Punishment*:\
+
+> Talking nonsense is man's only privilege that distinguishes him from all other organisms... Talk nonsense in your own way. That's almost better than talking sense in somebody else's...Sense will always be there, but life can \>be fenced in.
+
+## Add an Equation
+
+$E=mc^2$\
+$slope=\frac{y_{2}-y_{1}}{x_{2}-x_{1}}$
+
+## Add a Footnote
+
+This is a footnote[^1]
+
+[^1]: This is a footnote for **this** section
+
+## Add Citations
+
+-   R for Everyone [@lander2014r]
+-   Discovering Statistics Using R [@field2012discovering]
+
+# Inline Code
+
+```{r include=FALSE}
+library(knitr)
+## Load the ggplot2 package
+library(ggplot2)
+theme_set(theme_minimal())
+
+## Set the working directory to the root of your DSC 520 directory
+setwd("/Users/gillian/Documents/Bellevue Grad Program/Fall 2022/DSC520/DSC520 Repo")
+
+## Load the `data/r4ds/heights.csv` to
+heights_df <- read.csv("data/r4ds/heights.csv")
+head(heights_df)
+
+# https://www.rdocumentation.org/packages/ggplot2/versions/3.3.0/topics/geom_path
+## Load the file `"data/nytimes/covid-19-data/us-states.csv"` and
+## assign it to the `covid_df` dataframe
+covid_df <- read.csv("data/nytimes/covid-19-data/us-states.csv")
+head(covid_df)
+## Parse the date column using `as.Date()``
+covid_df$date <- as.Date(covid_df$date)
+
+## Create three dataframes named `california_df`, `ny_df`, and `florida_df`
+## containing the data from California, New York, and Florida
+california_df <- covid_df[ which( covid_df$state == "California"), ]
+ny_df <- covid_df[ which( covid_df$state == "New York"), ]
+florida_df <- covid_df[ which( covid_df$state == "Florida"), ]
+```
+
+## NY Times COVID-19 Data
+
+```{r echo=FALSE}
+ggplot(data= florida_df, aes(x=date, group=1)) +
+  geom_line(aes(y = cases, colour = "Florida")) +
+  geom_line(data=ny_df, aes(y = cases,colour="New York")) +
+  geom_line(data=california_df, aes(y = cases, colour="California")) +
+  scale_colour_manual("",
+                      breaks = c("Florida", "New York", "California"),
+                      values = c("darkred", "darkgreen", "steelblue")) +
+  xlab(" ") + ylab("Cases") + scale_y_log10()
+```
+
+## R4DS Height vs Earnings
+
+```{r echo=FALSE}
+ggplot(heights_df, aes(x=height, y=earn, col=sex)) + geom_point() + ggtitle("Height vs. Earnings") + xlab("Height (Inches)") + ylab("Earnings (Dollars)")
+```
+
+# Tables
+
+## Knitr Table with Kable
+
+```{r echo=FALSE}
+name <- c("Aragon", "Bilbo", "Frodo", "Galadriel", "Sam", "Gandalf", "Legolas", "Sauron", "Gollum")
+race <- c("Men", "Hobbit", "Hobbit", "Elf", "Hobbit", "Maia", "Elf", "Maia", "Hobbit")
+in_fellowship <- c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE)
+ring_bearer <- c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
+age <- c(88, 129, 51, 7000, 36, 2019, 2931, 7052, 589)
+
+characters_df <- data.frame(name, race, in_fellowship, ring_bearer, age)
+
+kable(characters_df, caption = "One Ring to Rule Them All")
+```
+
+## Pandoc Table
+
+|  Name  |  Race  | In Fellowship? | Is Ring Bearer? | Age  |
+|:------:|:------:|:--------------:|:---------------:|:----:|
+| Aragon |  Men   |      Yes       |       No        |  88  |
+| Bilbo  | Hobbit |       No       |       Yes       | 129  |
+| Frodo  | Hobbit |      Yes       |       Yes       |  51  |
+|  Sam   | Hobbit |      Yes       |       Yes       |  36  |
+| Sauron |  Maia  |       No       |       Yes       | 7052 |
+
+# References

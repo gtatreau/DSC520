@@ -10,6 +10,19 @@ library(dplyr)
 file_source <- "/Users/gillian/Documents/Bellevue Grad Program/Fall 2022/DSC520/DSC520 Repo/week-6-housing.xlsx"
 housing <- read_excel(file_source)
 
+# Sale Year
+housing$Sale_Year <- format(housing$`Sale Date`, format="%Y")
+head(housing$Sale_Year)
+
+# Bathroom
+housing$bathrooms <- with(housing, bath_full_count + (bath_half_count * 0.5) + (bath_3qtr_count * 0.75))
+head(housing$bathrooms)
+
+# Outside space
+housing$sq_ft_outside <- with(housing, sq_ft_lot - square_feet_total_living)
+head(housing$sq_ft_outside)
+
+
 # apply function
 apply(housing, 2, summary)
 
@@ -72,14 +85,3 @@ tmin_bath = 2.2 - (1.5 * IQR(housing$bathrooms))
 tmax_bath = 2.5 + (1.5 * IQR(housing$bathrooms)) 
 housing$bathrooms[which(housing$bathrooms < tmin_bath | housing$bathrooms > tmax_bath)]
 
-# Sale Year
-housing$Sale_Year <- format(housing$`Sale Date`, format="%Y")
-head(housing$Sale_Year)
-
-# Bathroom
-housing$bathrooms <- with(housing, bath_full_count + (bath_half_count * 0.5) + (bath_3qtr_count * 0.75))
-head(housing$bathrooms)
-
-# Outside space
-housing$sq_ft_outside <- with(housing, sq_ft_lot - square_feet_total_living)
-head(housing$sq_ft_outside)
